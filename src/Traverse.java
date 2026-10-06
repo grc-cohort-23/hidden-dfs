@@ -29,7 +29,7 @@ public class Traverse {
     eve.getConfidants().addAll(Arrays.asList(frank, irene));
     frank.getConfidants().addAll(Arrays.asList(bob, grace));
     grace.getConfidants().add(henry);
-    henry.getConfidants().addAll(Arrays.asList(alice, diana));
+    //henry.getConfidants().addAll(Arrays.asList(alice, diana));
     irene.getConfidants().addAll(Arrays.asList(jack, diana));
     jack.getConfidants().addAll(Arrays.asList(charlie, bob));
 
@@ -69,5 +69,36 @@ public class Traverse {
     v45.neighbors = new ArrayList<>(List.of(v23));
     v23.neighbors = new ArrayList<>(List.of());
     v67.neighbors = new ArrayList<>(List.of(v91));
+
+    printGossipers(grace);
+    System.out.println("----------------------");
+    System.out.println(minReachable(graph, 78));
+  }
+
+  public static void printGossipers(Person init){
+    printGossipers(init, new HashSet<Person>());
+  }
+
+  private static void printGossipers(Person init, Set<Person> seen){
+    if(init == null || seen.contains(init)) return;
+    seen.add(init);
+    System.out.println(init.getName());
+    for(Person con : init.getConfidants()){
+      printGossipers(con, seen);
+    }
+  }
+
+  public static int minReachable(Map<Integer, Set<Integer>> map, int current){
+    return minReachable(map, current, new HashSet<Integer>());
+  }
+
+  private static int minReachable(Map<Integer, Set<Integer>> map, int current, Set<Integer> visited){
+    if(visited.contains(current)) return Integer.MAX_VALUE;
+    visited.add(current);
+    int min = current;
+    for(int neighbor : map.get(current)){
+      min = Math.min(min, minReachable(map, neighbor, visited));
+    } 
+    return min;
   }
 }
