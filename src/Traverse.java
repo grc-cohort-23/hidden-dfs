@@ -70,4 +70,37 @@ public class Traverse {
     v23.neighbors = new ArrayList<>(List.of());
     v67.neighbors = new ArrayList<>(List.of(v91));
   }
+
+  public static int minReachable(Map<Integer, Set<Integer>> graph, int start) {
+    if (graph == null) throw new NullPointerException("Cannot find minimum of missing graph");
+    return minReachable(graph, start, new HashSet<Integer>());
+  }
+
+  private static int minReachable(Map<Integer, Set<Integer>> graph, int current, Set<Integer> visited) {
+    if (visited.contains(current)) return Integer.MAX_VALUE;
+    visited.add(current);
+
+    int minimum = current;
+    for (var neighbor : graph.get(current)) {
+      minimum = Math.min(
+        minReachable(graph, neighbor, visited), 
+        minimum
+      );
+    }
+    return minimum;
+  }
+
+  public static void printGossipers(Person initial) {
+    Set<Person> thoseWhoKnow = new HashSet<>();
+    printGossipers(initial, thoseWhoKnow);
+  }
+
+  private static void printGossipers(Person person, Set<Person> thoseWhoKnow) {
+    if (person == null || thoseWhoKnow.contains(person)) return;
+    thoseWhoKnow.add(person);
+    System.out.println(person.getName());
+    for (var confidant : person.getConfidants()) {
+      printGossipers(confidant,thoseWhoKnow);
+    }
+  }
 }
