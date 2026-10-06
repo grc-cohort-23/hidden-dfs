@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Gatherer.Integrator;
 
 public class Traverse {
   public static void main(String[] args) {
@@ -69,5 +71,74 @@ public class Traverse {
     v45.neighbors = new ArrayList<>(List.of(v23));
     v23.neighbors = new ArrayList<>(List.of());
     v67.neighbors = new ArrayList<>(List.of(v91));
+    
+    //printPerson(grace);
+  System.out.print(printMinReachable(graph, 45));
+  }
+
+
+  //////////////////////////////////////////
+  ///PRINT PERSON CHAIN
+  //////////////////////////////////////////
+  
+  public static void printPerson(Person initial){
+    Set<Person> visited = new HashSet<>();
+    //printPerson( initial, visited); //recursive
+
+    //iterative
+    Stack<Person> stack = new Stack<>();
+    stack.push(initial);
+    while (!stack.isEmpty()) {
+      Person cur = stack.pop();
+      if(cur == null || visited.contains(cur)){
+        return ;
+      }
+      
+      visited.add(cur);
+      
+      for(Person p : cur.getConfidants()){
+        stack.push(p);
+      }
+      System.out.println(cur.getName());
+    }
+  }
+
+  public static void printPerson(Person curPerson, Set<Person> visited){
+    if(curPerson == null || visited.contains(curPerson)){
+      return;
+    }
+    
+    visited.add(curPerson);
+    
+    for(Person p : curPerson.getConfidants()){
+      printPerson(p, visited);  
+    }
+
+    System.out.println(curPerson.getName());
+  }
+
+
+  //////////////////////////////////////////
+  ///MIN REACHABLE
+  //////////////////////////////////////////
+
+  public static  int printMinReachable(Map<Integer, Set<Integer>> graph, int start){
+    Set<Integer> visited = new HashSet<>();
+    return printMinReachable(graph, start, visited);
+  }
+
+  public static  int printMinReachable(Map<Integer, Set<Integer>> graph, int cur, Set<Integer> visited){
+    if(graph == null || graph.get(cur).size() == 0 || visited.contains(cur)){
+      return Integer.MAX_VALUE;
+    }
+
+    int curMin = cur;
+    visited.add(cur);
+    
+    for(int i : graph.get(cur)){
+      curMin = Math.min(curMin, printMinReachable(graph, i, visited));
+    }
+
+    return curMin;
   }
 }
