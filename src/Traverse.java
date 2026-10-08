@@ -69,5 +69,41 @@ public class Traverse {
     v45.neighbors = new ArrayList<>(List.of(v23));
     v23.neighbors = new ArrayList<>(List.of());
     v67.neighbors = new ArrayList<>(List.of(v91));
+
+    // printGossipers(alice);
+    System.out.println(minReachable(graph, 91));
   }
+  public static void printGossipers(Person intitial){
+      Set<Person> visted= new HashSet<>();   
+      printGossipers(intitial, visted);
+  }
+  private static void printGossipers(Person intitial, Set<Person>visted){
+      if( intitial==null||visted.contains(intitial))return;
+
+      visted.add(intitial);
+      System.out.println(intitial.getName());
+
+      for(var gossiper: intitial.getConfidants()){
+        printGossipers(gossiper,visted);
+      }
+  }
+
+  public static int minReachable(Map<Integer, Set<Integer>> graph, int start){
+    if( graph==null) throw new NullPointerException("Cannot find min of missing graph");
+    return  minReachable(graph, start, new HashSet<>());
+  }
+  
+  private static int minReachable(Map<Integer, Set<Integer>> graph, int current, Set<Integer> visted) {
+    if(visted.contains(current)) return Integer.MAX_VALUE;
+    visted.add(current);
+    int min= current;
+
+    for (int neighbor: graph.get(current)){
+      int minFromNeighbor = minReachable(graph, neighbor, visted);
+      if(minFromNeighbor<min) min = minFromNeighbor;
+      
+    }
+    return min;
+  }
+
 }
